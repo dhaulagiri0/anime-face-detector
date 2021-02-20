@@ -67,7 +67,6 @@ def load_file_from_dir(dir_path):
             ret.append(path_comb)
     return ret
 
-
 def fmt_time(dtime):
     if dtime <= 0:
         return '0:00.000'
@@ -97,6 +96,9 @@ def main():
                         default=0, type=int)
     parser.add_argument('-crop-width', help='The width of images to crop', dest='crop_width', type=int)
     parser.add_argument('-crop-height', help='The height of images to crop', dest='crop_height', type=int)
+    parser.add_argument('-scale-factor', help='Scale factor for the bounding boxes', dest='scale_factor', type=float)
+    parser.add_argument('-square-crop', dest='square', action='store_true')
+    parser.set_defaults(square=False)
 
     args = parser.parse_args()
 
@@ -158,6 +160,28 @@ def main():
                 cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), (0, 0, 255), 2)
 
             if args.crop_output_image_location:
+                width = x2-x1
+                height = y2-y1
+                center_w = (x2+x1)/2
+                center_h = (y2+y1)/2
+                if args.scale_factor:
+                    width *= args.scale_factor
+                    height *= args.scale_factor
+                
+                if args.square:
+                    box_len = max(width, height)
+                    
+                    x2 = int(center_w + box_len / 2)
+                    x1 = int(center_w - box_len / 2)
+                    y2 = int(center_h + box_len / 2)
+                    y1 = int(center_h - box_len / 2)
+                    
+                else:
+                    x2 = int(center_w + width / 2)
+                    x1 = int(center_w - width / 2)
+                    y2 = int(center_h + height / 2)
+                    y1 = int(center_h - height / 2)
+                
                 cropped_image = img[int(y1):int(y2), int(x1):int(x2)]
 
                 if args.crop_width and args.crop_height:
