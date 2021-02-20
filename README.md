@@ -67,6 +67,14 @@ The original implementation of Faster-RCNN using Tensorflow can be found [here](
         ```bash
         python main.py -i /path/to/image/or/folder -crop-location /path/to/store/cropped/images -crop-height 224 -crop-width 224
         ```
+    - Scale bounding boxes by 2 times and crop detected images
+        ```bash
+        python main.py -i /path/to/image/or/folder -crop-location /path/to/store/cropped/images -scale-factor 2.0
+        ```
+    - Match bounding box width and height to crop square images
+        ```bash
+        python main.py -i /path/to/image/or/folder -crop-location /path/to/store/cropped/images -square-crop
+        ```
 
 ## Results
 **Mean AP for this model: 0.9086**
