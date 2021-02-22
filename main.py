@@ -8,7 +8,6 @@ import json
 import time
 from nms_wrapper import NMSType, NMSWrapper
 
-
 def detect(sess, rcnn_cls, image):
     # pre-processing image for Faster-RCNN
     img_origin = image.astype(np.float32, copy=True)
@@ -98,6 +97,7 @@ def main():
     parser.add_argument('-crop-height', help='The height of images to crop', dest='crop_height', type=int)
     parser.add_argument('-scale-factor', help='Scale factor for the bounding boxes', dest='scale_factor', type=float)
     parser.add_argument('-square-crop', dest='square', action='store_true')
+    parser.add_argument('-min-len', help='The minimum length of the smallest side of the bounding box', dest='min_len', type=int)
     parser.set_defaults(square=False)
 
     args = parser.parse_args()
@@ -182,6 +182,9 @@ def main():
                     y2 = int(center_h + height / 2)
                     y1 = int(center_h - height / 2)
                 
+                if args.min_len:
+                    if min(width, height) < args.min_len: continue
+
                 cropped_image = img[int(y1):int(y2), int(x1):int(x2)]
 
                 if args.crop_width and args.crop_height:
