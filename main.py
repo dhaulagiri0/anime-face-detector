@@ -189,8 +189,11 @@ def main():
                                               (args.crop_width, args.crop_height), 
                                               interpolation = cv2.INTER_AREA)
 
-                cv2.imwrite(args.crop_output_image_location + str(args.start_output_number) + ".jpg", cropped_image)
-                args.start_output_number += 1
+                if cropped_image.any():
+                    cv2.imwrite(args.crop_output_image_location + str(args.start_output_number) + ".jpg", cropped_image)
+                    args.start_output_number += 1
+                else:
+                    continue
 
         if args.output:
             if ((idx+1) % 1000) == 0:
