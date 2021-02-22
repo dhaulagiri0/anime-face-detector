@@ -135,6 +135,7 @@ def main():
     time_start = time.time()
 
     for idx, file in enumerate(files):
+        save_name = file.split('/')[-1].split('.')[0]
         elapsed = time.time() - time_start
         eta = (file_len - idx) * elapsed / idx if idx > 0 else 0
         print('[%d/%d] Elapsed: %s, ETA: %s >> %s' % (idx+1, file_len, fmt_time(elapsed), fmt_time(eta), file))
@@ -150,6 +151,7 @@ def main():
         boxes = boxes[inds, :]
 
         result[file] = []
+        cnt = 1
         for i in range(scores.shape[0]):
             x1, y1, x2, y2 = boxes[i, :].tolist()
             new_result = {'score': float(scores[i]),
@@ -175,12 +177,16 @@ def main():
                     x1 = int(center_w - box_len / 2)
                     y2 = int(center_h + box_len / 2)
                     y1 = int(center_h - box_len / 2)
-                    
                 else:
                     x2 = int(center_w + width / 2)
                     x1 = int(center_w - width / 2)
                     y2 = int(center_h + height / 2)
                     y1 = int(center_h - height / 2)
+
+                if x2 > img.width: x2 = img.width
+                if x1 < 0: x1 = 0
+                if y2 > img.height: y2 = img.height
+                if y1 < 0: y1 = 0
                 
                 if args.min_len:
                     if min(width, height) < args.min_len: continue
@@ -193,8 +199,9 @@ def main():
                                               interpolation = cv2.INTER_AREA)
 
                 if cropped_image.any():
-                    cv2.imwrite(args.crop_output_image_location + str(args.start_output_number) + ".jpg", cropped_image)
+                    cv2.imwrite(args.crop_output_image_location + save_name + '_' + str(cnt) + ".jpg", cropped_image)
                     args.start_output_number += 1
+                    cnt += 1
                 else:
                     continue
 
