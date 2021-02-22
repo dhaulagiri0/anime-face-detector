@@ -183,9 +183,9 @@ def main():
                     y2 = int(center_h + height / 2)
                     y1 = int(center_h - height / 2)
 
-                if x2 > img.width: x2 = img.width
+                if x2 > img.width: x2 = img.width - 1
                 if x1 < 0: x1 = 0
-                if y2 > img.height: y2 = img.height
+                if y2 > img.height: y2 = img.height - 1
                 if y1 < 0: y1 = 0
                 
                 if args.min_len:
